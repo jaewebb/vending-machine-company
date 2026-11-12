@@ -1,0 +1,244 @@
+// use prisma-8
+
+model Company {
+  id               Int                @id @default(autoincrement())
+
+  name             String
+
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @default(now())
+  isDeleted        Boolean            @default(false)
+
+  companyLocations CompanyLocation[]
+  contacts         Contact[]
+
+  @@index([name])
+}
+
+model CompanyLocation {
+  id               Int                @id @default(autoincrement())
+
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @default(now())
+  isDeleted        Boolean            @default(false)
+
+  companyId        Int
+  company          Company            @relation(fields: [companyId], references: [id])
+  locationId       Int
+  location         Location           @relation(fields: [locationId], references: [id])
+
+  @@unique([companyId, locationId])
+  @@index([locationId])
+}
+
+model Contact {
+  id               Int                @id @default(autoincrement())
+
+  firstName        String
+  lastName         String
+  email            String
+  phone            String
+  notes            String?
+
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @default(now())
+  isDeleted        Boolean            @default(false)
+
+  companyId        Int
+  company          Company            @relation(fields: [companyId], references: [id])
+
+  @@index([lastName])
+}
+
+model Item {
+  id               Int                @id @default(autoincrement())
+
+  name             String
+  cost             Decimal
+  barcode          String
+  brand            String
+  description      String
+
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @default(now())
+  isDeleted        Boolean            @default(false)
+
+  storageId        Int
+  storage          Storage            @relation(fields: [storageId], references: [id])
+  typeId           Int
+  type             ItemType           @relation(fields: [typeId], references: [id])
+
+  locationItems    LocationItem[]
+  vendingItems     VendingItem[]
+
+  @@index([name])
+}
+
+model ItemType {
+  id               Int                @id @default(autoincrement())
+
+  name             String
+  items            Item[]
+
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @default(now())
+  isDeleted        Boolean            @default(false)
+
+  @@index([name])
+}
+
+model Location {
+  id               Int                @id @default(autoincrement())
+
+  name             String
+  streetNumber     String
+  streetName       String
+  unitSuite        String?
+  floorLevel       String?
+  suffix           String?
+  city             String
+  province         String?
+  state            String?
+  country          String
+  postalCode       String?
+  zip              String?
+  description      String?
+
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @default(now())
+  isDeleted        Boolean            @default(false)
+
+  companyLocations CompanyLocation[]
+  locationItems    LocationItem[]
+  vendingMachines  VendingMachine[]
+
+  @@index([streetName])
+}
+
+model LocationItem {
+  id               Int                @id @default(autoincrement())
+
+  expiryDate       DateTime?
+  quantity         Int
+  price            Decimal
+  isActive         Boolean            @default(true)
+
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @default(now())
+  isDeleted        Boolean            @default(false)
+
+  locationId       Int
+  location         Location           @relation(fields: [locationId], references: [id])
+  itemId           Int
+  item             Item               @relation(fields: [itemId], references: [id])
+
+  @@unique([locationId, itemId])
+  @@index([itemId])
+}
+
+model Ownership {
+  id               Int                @id @default(autoincrement())
+
+  type             String
+
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @default(now())
+  isDeleted        Boolean            @default(false)
+
+  vendingMachines VendingMachine[]
+
+  @@index([type])
+}
+
+model Status {
+  id               Int                @id @default(autoincrement())
+
+  status           String
+
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @default(now())
+  isDeleted        Boolean            @default(false)
+
+  vendingMachines VendingMachine[]
+
+  @@index([status])
+}
+
+model Storage {
+  id               Int                @id @default(autoincrement())
+
+  type             String
+
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @default(now())
+  isDeleted        Boolean            @default(false)
+
+  items            Item[]
+
+  @@index([type])
+}
+
+model VendingMachine {
+  id               Int                @id @default(autoincrement())
+
+  name             String
+  manufacturer     String?
+  model            String?
+  serialNumber     String?
+  hasTapReader     Boolean?           @default(false)
+  acceptsCash      Boolean?           @default(false)
+  installationDate DateTime?
+  lastServicedAt   DateTime?
+  notes            String?
+
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @default(now())
+  isDeleted        Boolean            @default(false)
+
+  statusId         Int
+  status           Status             @relation(fields: [statusId], references: [id])
+  locationId       Int
+  location         Location           @relation(fields: [locationId], references: [id])
+  typeId           Int
+  type             VendingMachineType @relation(fields: [typeId], references: [id])
+  ownershipId      Int
+  ownership        Ownership          @relation(fields: [ownershipId], references: [id])
+
+  vendingItems     VendingItem[]
+
+  @@index([name])
+}
+
+model VendingMachineType {
+  id               Int                @id @default(autoincrement())
+
+  name             String
+  description      String?
+
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @default(now())
+  isDeleted        Boolean            @default(false)
+
+  vendingMachines VendingMachine[]
+
+  @@index([name])
+}
+
+model VendingItem {
+  id               Int                @id @default(autoincrement())
+
+  price            Decimal
+  selection        String?
+  column           String?
+  quantity         Int
+  expiryDate       DateTime?
+
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @default(now())
+  isDeleted        Boolean            @default(false)
+
+  vendingMachineId Int
+  vendingMachine   VendingMachine     @relation(fields: [vendingMachineId], references: [id])
+  itemId           Int
+  item             Item               @relation(fields: [itemId], references: [id])
+}
