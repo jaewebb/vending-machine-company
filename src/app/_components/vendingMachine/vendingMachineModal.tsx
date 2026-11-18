@@ -16,7 +16,7 @@ type VendingMachine = RouterOutputs["vendingMachine"]["getAll"][number];
 
 interface VendingMachineModalProps {
   isOpen: boolean;
-  locations: Array<Location>
+  locations: Array<Location>;
   selectedVendingMachine?: VendingMachine;
   onClose: () => void;
 }

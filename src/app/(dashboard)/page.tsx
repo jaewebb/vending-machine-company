@@ -1,16 +1,13 @@
-// import { api, HydrateClient } from "~/trpc/server";
 import Link from "next/link";
+import { UserGreeting } from "~/app/_components/userGreeting";
 import { HydrateClient } from "~/trpc/server";
 
 export default async function Home() {
-  // const hello = await api.location.hello({ text: "from tRPC" });
-
-  // void api.post.getAll.prefetch();
-
   return (
     <HydrateClient>
       <div className="flex flex-col gap-4 p-16">
-        <h1>This will be a dashboard</h1>
+        <UserGreeting />
+        <h2>This will be a dashboard</h2>
         <p>
           Check out{" "}
           <Link className="hover:underline" href="/vendingMachine">

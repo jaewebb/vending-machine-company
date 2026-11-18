@@ -1,8 +1,7 @@
+import { VendingMachineList } from "~/app/_components/vendingMachine/vendingMachineList";
 import { api, HydrateClient } from "~/trpc/server";
 
-import { VendingMachineList } from "~/app/_components/vendingMachine/vendingMachineList";
-
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export default async function VendingMachine() {
   await void api.vendingMachine.getAll.prefetch();

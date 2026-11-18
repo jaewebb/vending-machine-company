@@ -1,8 +1,7 @@
+import { LocationList } from "~/app/_components/location/locationList";
 import { api, HydrateClient } from "~/trpc/server";
 
-import { LocationList } from "~/app/_components/location/locationList";
-
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export default async function Location() {
   await api.location.getAll.prefetch();

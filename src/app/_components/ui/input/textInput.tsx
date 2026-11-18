@@ -5,6 +5,7 @@ interface TextInputProps {
   disabled?: boolean;
   id?: string;
   label: string;
+  minLength?: number;
   name: string;
   placeholder?: string;
   required?: boolean;
@@ -41,6 +42,7 @@ export function TextInput({
   disabled = false,
   id,
   label,
+  minLength,
   name,
   placeholder,
   required = false,
@@ -61,6 +63,7 @@ export function TextInput({
         className={textInput({ size, width })}
         disabled={disabled}
         id={id ?? uid}
+        minLength={minLength}
         name={name}
         onBlur={onBlur ? (e) => onBlur(e.target.value) : undefined}
         onChange={onChange ? (e) => onChange(e.target.value) : undefined}
