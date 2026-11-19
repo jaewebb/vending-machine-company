@@ -6,5 +6,5 @@ import contractJson from "../prisma/contract.json";
 
 export const db = postgres({
   contract: contractFromJson<Contract>(contractJson),
-  url: process.env.DATABASE_URL_UNPOOLED,
+  url: process.env.DATABASE_URL,
 });
