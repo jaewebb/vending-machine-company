@@ -1,9 +1,9 @@
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
 export const vendingMachineRouter = createTRPCRouter({
-  create: publicProcedure
+  create: protectedProcedure
     .input(z.object({ name: z.string().min(1) }))
     .input(z.object({ manufacturer: z.string().optional() }))
     .input(z.object({ model: z.string().optional() }))
@@ -32,10 +32,11 @@ export const vendingMachineRouter = createTRPCRouter({
         locationId: input.locationId,
         typeId: input.typeId,
         ownershipId: input.ownershipId,
+        createdBy: ctx.session.user.id,
       });
     }),
 
-  update: publicProcedure
+  update: protectedProcedure
     .input(z.object({ id: z.coerce.number().min(1) }))
     .input(z.object({ name: z.string().min(1) }))
     .input(z.object({ manufacturer: z.string().min(1) }))
@@ -58,15 +59,20 @@ export const vendingMachineRouter = createTRPCRouter({
       });
     }),
 
-  getAll: publicProcedure.query(async ({ ctx }) => {
-    const vendingMachine = await ctx.db.orm.public.VendingMachine.where({ isDeleted: false }).all();
+  getAll: protectedProcedure.query(async ({ ctx }) => {
+    const vendingMachine = await ctx.db.orm.public.VendingMachine.where({
+      isDeleted: false,
+      createdBy: ctx.session.user.id,
+    }).all();
 
     return vendingMachine ?? null;
   }),
 
-  delete: publicProcedure.input(z.object({ id: z.number() })).mutation(async ({ ctx, input }) => {
-    const { id } = input;
+  delete: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      const { id } = input;
 
-    return ctx.db.orm.public.VendingMachine.where({ id }).update({ isDeleted: true });
-  }),
+      return ctx.db.orm.public.VendingMachine.where({ id }).update({ isDeleted: true });
+    }),
 });

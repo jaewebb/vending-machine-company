@@ -20,9 +20,9 @@ const geist = Geist({
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html className={`${geist.variable}`} lang="en">
-      <body>
-        <main className="flex grow justify-center items-center min-h-screen bg-linear-to-b from-[#152649] to-[#151c2c] text-white">
+    <html className={`${geist.variable} h-full`} lang="en">
+      <body className="h-full">
+        <main className="flex h-full justify-center items-center bg-linear-to-b from-[#152649] to-[#151c2c] text-white">
           {children}
         </main>
       </body>

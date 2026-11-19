@@ -6,6 +6,7 @@ import { TextArea } from "~/app/_components/ui/input/textarea";
 import { TextInput } from "~/app/_components/ui/input/textInput";
 import { Modal } from "~/app/_components/ui/modal/modal";
 import { Select } from "~/app/_components/ui/select/select";
+
 import provinces from "~/app/data/provinces";
 import states from "~/app/data/states";
 import territories from "~/app/data/territories";
@@ -27,6 +28,7 @@ interface LocationModalProps {
 export function LocationModal({ isOpen, selectedLocation, onClose }: LocationModalProps) {
   const utils = api.useUtils();
   const uid = useId();
+
   const [name, setName] = useState(selectedLocation?.name ?? "");
   const [streetNumber, setStreetNumber] = useState(selectedLocation?.streetNumber ?? "");
   const [streetName, setStreetName] = useState(selectedLocation?.streetName ?? "");

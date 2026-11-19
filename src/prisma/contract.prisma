@@ -6,7 +6,7 @@ model Company {
   name             String
 
   createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @default(now())
+  updatedAt        DateTime           @onCreate(now()) @onUpdate(now())
   isDeleted        Boolean            @default(false)
 
   companyLocations CompanyLocation[]
@@ -19,7 +19,7 @@ model CompanyLocation {
   id               Int                @id @default(autoincrement())
 
   createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @default(now())
+  updatedAt        DateTime           @onCreate(now()) @onUpdate(now())
   isDeleted        Boolean            @default(false)
 
   companyId        Int
@@ -41,7 +41,7 @@ model Contact {
   notes            String?
 
   createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @default(now())
+  updatedAt        DateTime           @onCreate(now()) @onUpdate(now())
   isDeleted        Boolean            @default(false)
 
   companyId        Int
@@ -60,7 +60,7 @@ model Item {
   description      String
 
   createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @default(now())
+  updatedAt        DateTime           @onCreate(now()) @onUpdate(now())
   isDeleted        Boolean            @default(false)
 
   storageId        Int
@@ -81,7 +81,7 @@ model ItemType {
   items            Item[]
 
   createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @default(now())
+  updatedAt        DateTime           @onCreate(now()) @onUpdate(now())
   isDeleted        Boolean            @default(false)
 
   @@index([name])
@@ -103,9 +103,11 @@ model Location {
   postalCode       String?
   zip              String?
   description      String?
+  createdBy        String
+  user             User               @relation(fields: [createdBy], references: [id])
 
   createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @default(now())
+  updatedAt        DateTime           @onCreate(now()) @onUpdate(now())
   isDeleted        Boolean            @default(false)
 
   companyLocations CompanyLocation[]
@@ -124,7 +126,7 @@ model LocationItem {
   isActive         Boolean            @default(true)
 
   createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @default(now())
+  updatedAt        DateTime           @onCreate(now()) @onUpdate(now())
   isDeleted        Boolean            @default(false)
 
   locationId       Int
@@ -142,7 +144,7 @@ model Ownership {
   type             String
 
   createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @default(now())
+  updatedAt        DateTime           @onCreate(now()) @onUpdate(now())
   isDeleted        Boolean            @default(false)
 
   vendingMachines VendingMachine[]
@@ -156,7 +158,7 @@ model Status {
   status           String
 
   createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @default(now())
+  updatedAt        DateTime           @onCreate(now()) @onUpdate(now())
   isDeleted        Boolean            @default(false)
 
   vendingMachines VendingMachine[]
@@ -170,7 +172,7 @@ model Storage {
   type             String
 
   createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @default(now())
+  updatedAt        DateTime           @onCreate(now()) @onUpdate(now())
   isDeleted        Boolean            @default(false)
 
   items            Item[]
@@ -190,9 +192,11 @@ model VendingMachine {
   installationDate DateTime?
   lastServicedAt   DateTime?
   notes            String?
+  createdBy        String
+  user             User               @relation(fields: [createdBy], references: [id])
 
   createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @default(now())
+  updatedAt        DateTime           @onCreate(now()) @onUpdate(now())
   isDeleted        Boolean            @default(false)
 
   statusId         Int
@@ -216,7 +220,7 @@ model VendingMachineType {
   description      String?
 
   createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @default(now())
+  updatedAt        DateTime           @onCreate(now()) @onUpdate(now())
   isDeleted        Boolean            @default(false)
 
   vendingMachines VendingMachine[]
@@ -234,11 +238,71 @@ model VendingItem {
   expiryDate       DateTime?
 
   createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @default(now())
+  updatedAt        DateTime           @onCreate(now()) @onUpdate(now())
   isDeleted        Boolean            @default(false)
 
   vendingMachineId Int
   vendingMachine   VendingMachine     @relation(fields: [vendingMachineId], references: [id])
   itemId           Int
   item             Item               @relation(fields: [itemId], references: [id])
+}
+
+model User {
+  id               String             @id
+  name             String
+  email            String             @unique
+  emailVerified    Boolean            @default(false)
+  image            String?
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @onCreate(now()) @onUpdate(now())
+  sessions         Session[]
+  accounts         Account[]
+  location         Location[]
+  vendingMachine   VendingMachine[]
+
+  @@map("user")
+}
+
+model Session {
+  id               String             @id
+  expiresAt        DateTime
+  token            String             @unique
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @onCreate(now()) @onUpdate(now())
+  ipAddress        String?
+  userAgent        String?
+  userId           String
+  user             User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("session")
+}
+
+model Account {
+  id                    String        @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @onCreate(now()) @onUpdate(now())
+
+  @@map("account")
+}
+
+model Verification {
+  id                    String        @id
+  identifier            String
+  value                 String
+  expiresAt             DateTime
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @onCreate(now()) @onUpdate(now())
+
+  @@map("verification")
 }

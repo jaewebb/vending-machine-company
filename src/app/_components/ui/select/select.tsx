@@ -25,6 +25,7 @@ interface SelectProps {
   label: string;
   name: string;
   options: Array<Option>;
+  selectOptionValue?: "" | -1;
   size?: "sm" | "md";
   value?: string | number;
   width?: "sm" | "md" | "lg" | "full";
@@ -57,6 +58,7 @@ export function Select({
   label,
   name,
   options,
+  selectOptionValue = "",
   size = "md",
   value,
   width = "full",
@@ -75,7 +77,7 @@ export function Select({
         onChange={onChange ? (e) => onChange(e.target.value) : undefined}
         value={value}
       >
-        <option disabled={true} value="-1">
+        <option disabled={true} value={selectOptionValue}>
           Select
         </option>
         {options.map((option) => {

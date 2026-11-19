@@ -195,6 +195,7 @@ export function VendingMachineModal({
             name="location"
             onChange={(locationId) => setLocationId(Number(locationId))}
             options={locationIdOptions}
+            selectOptionValue={-1}
             value={locationId}
           />
           <Select
@@ -206,6 +207,7 @@ export function VendingMachineModal({
               { label: "Inactive", value: 2 },
               { label: "Out of Order", value: 3 },
             ]}
+            selectOptionValue={-1}
             value={statusId}
           />
           <Select
@@ -219,6 +221,7 @@ export function VendingMachineModal({
               { label: "Hot beverage", value: 4 },
               { label: "Hot water dispenser", value: 5 },
             ]}
+            selectOptionValue={-1}
             value={typeId}
           />
           <Select
@@ -230,6 +233,7 @@ export function VendingMachineModal({
               { label: "Customer Rental", value: 2 },
               { label: "Customer Supplied", value: 3 },
             ]}
+            selectOptionValue={-1}
             value={ownershipId}
           />
         </div>

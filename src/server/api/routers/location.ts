@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "~/server/api/trpc";
 
 export const locationRouter = createTRPCRouter({
   hello: publicProcedure.input(z.object({ text: z.string() })).query(({ input }) => {
@@ -9,7 +9,7 @@ export const locationRouter = createTRPCRouter({
     };
   }),
 
-  create: publicProcedure
+  create: protectedProcedure
     .input(z.object({ name: z.string().min(1) }))
     .input(z.object({ streetNumber: z.string().min(1) }))
     .input(z.object({ streetName: z.string().min(1) }))
@@ -49,10 +49,11 @@ export const locationRouter = createTRPCRouter({
         postalCode: input.postalCode,
         zip: input.zip,
         description: input.description,
+        createdBy: ctx.session.user.id,
       });
     }),
 
-  update: publicProcedure
+  update: protectedProcedure
     .input(z.object({ id: z.coerce.number().min(1) }))
     .input(z.object({ name: z.string().min(1) }))
     .input(z.object({ streetNumber: z.string().min(1) }))
@@ -98,18 +99,20 @@ export const locationRouter = createTRPCRouter({
       });
     }),
 
-  getAll: publicProcedure.query(async ({ ctx }) => {
+  getAll: protectedProcedure.query(async ({ ctx }) => {
     const location = await ctx.db.orm.public.Location
       // .orderBy({ name: 'asc' })
-      .where({ isDeleted: false })
+      .where({ isDeleted: false, createdBy: ctx.session.user.id })
       .all();
 
     return location ?? null;
   }),
 
-  delete: publicProcedure.input(z.object({ id: z.number() })).mutation(async ({ ctx, input }) => {
-    const { id } = input;
+  delete: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      const { id } = input;
 
-    return ctx.db.orm.public.Location.where({ id }).update({ isDeleted: true });
-  }),
+      return ctx.db.orm.public.Location.where({ id }).update({ isDeleted: true });
+    }),
 });

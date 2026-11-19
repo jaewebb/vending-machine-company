@@ -30,9 +30,9 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
     });
   } catch (e: unknown) {
     return (
-      <html className={`${geist.variable}`} lang="en">
-        <body>
-          <main className="flex grow justify-center items-center min-h-screen bg-linear-to-b from-[#152649] to-[#151c2c] text-white">
+      <html className={`${geist.variable} h-full`} lang="en">
+        <body className="h-full">
+          <main className="flex grow justify-center items-center bg-linear-to-b from-[#152649] to-[#151c2c] text-white">
             <div>{String(e)}</div>
           </main>
         </body>
@@ -45,8 +45,8 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   }
 
   return (
-    <html className={`${geist.variable}`} lang="en">
-      <body>
+    <html className={`${geist.variable} h-full`} lang="en">
+      <body className="h-full">
         <TRPCReactProvider>
           <Wrapper>{children}</Wrapper>
         </TRPCReactProvider>

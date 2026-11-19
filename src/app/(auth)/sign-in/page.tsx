@@ -4,7 +4,7 @@ import "~/styles/globals.css";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { type SubmitEvent, useState } from "react";
 import { Button } from "~/app/_components/ui/button/button";
 import { TextInput } from "~/app/_components/ui/input/textInput";
 import { signIn } from "~/app/auth-client";
@@ -13,7 +13,7 @@ export default function SignInPage() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
 
