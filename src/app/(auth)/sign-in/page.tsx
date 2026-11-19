@@ -33,7 +33,7 @@ export default function SignInPage() {
 
   return (
     <div className="flex flex-col gap-4 mx-auto w-1/3">
-      <h1 className="text-2xl font-bold">Sign In</h1>
+      <h1 className="text-2xl">Sign In</h1>
       {error && <p className="text-red-500">{error}</p>}
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
         <TextInput label="Email" name="email" placeholder="Email" required type="email" />

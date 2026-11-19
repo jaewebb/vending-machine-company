@@ -34,7 +34,7 @@ export default function SignUpPage() {
 
   return (
     <div className="flex flex-col gap-4 mx-auto w-1/3">
-      <h1 className="text-2xl font-bold">Sign Up</h1>
+      <h1 className="text-2xl">Sign Up</h1>
       <p>
         Feel free to make up an email if you don't want to share your real one, it won't need to be
         verified.

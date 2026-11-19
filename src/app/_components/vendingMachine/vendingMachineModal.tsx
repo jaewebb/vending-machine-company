@@ -133,7 +133,7 @@ export function VendingMachineModal({
       title={isUpdate ? "Update Vending Machine" : "Add Vending Machine"}
     >
       <form className="flex flex-col gap-4" id={uid} onSubmit={(e) => handleSubmit(e)}>
-        <div className="w-1/2 pr-2">
+        <div className="md:w-1/2 w-full pr-2">
           <TextInput
             label="Vending Machine Name"
             name="name"
@@ -143,7 +143,7 @@ export function VendingMachineModal({
             value={name}
           />
         </div>
-        <div className="flex gap-4">
+        <div className="flex md:flex-row flex-col gap-4">
           <TextInput
             label="Manufacturer"
             name="manufacturer"
@@ -159,7 +159,7 @@ export function VendingMachineModal({
           />
         </div>
 
-        <div className="flex gap-4">
+        <div className="flex md:flex-row flex-col gap-4">
           <Checkbox
             label="Has Tap Reader"
             name="hasTapReader"
@@ -189,7 +189,7 @@ export function VendingMachineModal({
             value={lastServicedAt}
           />
         </div> */}
-        <div className="flex flex-row gap-4">
+        <div className="flex md:flex-row flex-col gap-4">
           <Select
             label="Location"
             name="location"

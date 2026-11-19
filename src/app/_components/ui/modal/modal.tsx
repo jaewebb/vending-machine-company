@@ -1,6 +1,6 @@
+import { X } from "lucide-react";
 import { type MouseEvent, type ReactNode, useEffect, useId, useRef } from "react";
 import { tv } from "tailwind-variants";
-
 import { Button } from "~/app/_components/ui/button/button";
 
 interface ModalProps {
@@ -14,7 +14,7 @@ interface ModalProps {
 }
 
 const modal = tv({
-  base: "bg-[#151c2c] text-white backdrop:backdrop-blur-xs backdrop:bg-black/50 shadow-md m-auto rounded-sm p-5",
+  base: "bg-[#151c2c] text-white backdrop:backdrop-blur-xs backdrop:bg-black/50 backdrop:overflow-hidden backdrop:overscroll-contain overscroll-contain shadow-md m-auto rounded-sm p-5",
   variants: {
     size: {
       sm: "w-1/3",
@@ -58,11 +58,13 @@ export function Modal({ children, footer, id, isOpen, size = "md", title, onClos
       ref={dialogRef}
     >
       <div className="flex justify-between mb-5">
-        <h2>{title}</h2>
+        <h2 className="text-2xl">{title}</h2>
         <Button
           aria-label="Close modal"
           className="cursor-pointer"
-          label="&times;"
+          icon={<X />}
+          iconOnly
+          label="close"
           onClick={onClose}
         />
       </div>

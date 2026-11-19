@@ -8,7 +8,7 @@ export default async function Location() {
 
   return (
     <HydrateClient>
-      <div className="flex grow px-4 py-16">
+      <div className="flex grow p-16">
         <LocationList />
       </div>
     </HydrateClient>

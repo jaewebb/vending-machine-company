@@ -9,7 +9,7 @@ export default async function VendingMachine() {
 
   return (
     <HydrateClient>
-      <div className="flex grow px-4 py-16">
+      <div className="flex grow p-16">
         <VendingMachineList />
       </div>
     </HydrateClient>
