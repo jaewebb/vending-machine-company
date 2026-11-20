@@ -18,7 +18,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
         <div className="py-2">
           <Button
             icon={<Menu aria-hidden="true" focusable="false" />}
-            iconOnly
+            kind="iconOnly"
             label={isOpen ? "close the sidebar" : "open the sidebar"}
             onClick={() => setIsOpen(!isOpen)}
           />
@@ -35,7 +35,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
           <div className="flex justify-end">
             <Button
               icon={<ChevronLeft aria-hidden="true" focusable="false" />}
-              iconOnly
+              kind="iconOnly"
               label={isOpen ? "close the sidebar" : "open the sidebar"}
               onClick={() => setIsOpen(!isOpen)}
             />

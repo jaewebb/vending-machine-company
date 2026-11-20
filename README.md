@@ -4,7 +4,8 @@
 pnpm i
 pnpm dev
 ```
-You'll need a postgres db, point to it with DATABASE_URL in your .env file
+You'll need a postgres db, point to it with DATABASE_URL and DATABASE_URL_UNPOOLED in your .env file
+Imm not pooling connections at the moment since it's a small portfolio project and I need to prioritize tasks
 
 you'll need BETTER_AUTH_SECRET in your .env file
 generate one with

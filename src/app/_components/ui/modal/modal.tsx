@@ -63,7 +63,7 @@ export function Modal({ children, footer, id, isOpen, size = "md", title, onClos
           aria-label="Close modal"
           className="cursor-pointer"
           icon={<X />}
-          iconOnly
+          kind="iconOnly"
           label="close"
           onClick={onClose}
         />

@@ -50,15 +50,15 @@ export function LocationList() {
   };
 
   const columns = [
-    { value: "Name" },
-    { value: "Address" },
-    { value: "City" },
-    { value: "Province/State" },
-    { value: "Country" },
-    { value: "Postal/Zip" },
-    { value: "Description" },
-    { value: "Edit", srOnly: true },
-    { value: "Delete", srOnly: true },
+    { label: "Name", value: "name" }, //, onClick: () => setSortField('name') },
+    { label: "Address", value: "address" },
+    { label: "City", value: "city" }, //, onClick: () => setSortField('city')},
+    { label: "Province/State" }, //value: ["province", "state"] }, //, onClick: () => setSortField('provinceState') },
+    { label: "Country", value: "country" }, //, onClick: () => setSortField('country') },
+    { label: "Postal/Zip" }, //, onClick: () => setSortField('postalZip') },
+    { label: "Description", value: "description" },
+    { label: "Edit", srOnly: true },
+    { label: "Delete", srOnly: true },
   ];
 
   const rows = locations?.map((l) => {
@@ -80,7 +80,7 @@ export function LocationList() {
           value: (
             <Button
               icon={<Pencil />}
-              iconOnly
+              kind="iconOnly"
               label="Update"
               onClick={() => handleUpdateOpen(l)}
               size="sm"
@@ -92,7 +92,7 @@ export function LocationList() {
           value: (
             <Button
               icon={<Trash />}
-              iconOnly
+              kind="iconOnly"
               label="Delete"
               onClick={() => handleDeleteOpen(l)}
               size="sm"

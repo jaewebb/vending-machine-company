@@ -1,7 +1,7 @@
 "use client";
 
 import { Pencil, Plus, Trash } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { DeleteModal } from "~/app/_components/deleteModal";
 import { Button } from "~/app/_components/ui/button/button";
@@ -11,6 +11,20 @@ import { api, type RouterOutputs } from "~/trpc/react";
 
 type VendingMachine = RouterOutputs["vendingMachine"]["getAll"][number];
 
+type SortField = keyof Pick<
+  VendingMachine,
+  | "name"
+  | "manufacturer"
+  | "model"
+  | "serialNumber"
+  | "hasTapReader"
+  | "acceptsCash"
+  | "notes"
+  | "statusId"
+  | "typeId"
+  | "ownershipId"
+>;
+
 export function VendingMachineList() {
   const utils = api.useUtils();
 
@@ -18,8 +32,60 @@ export function VendingMachineList() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
+  const [currentSortDirection, setCurrentSortDirection] = useState("asc");
+  const [currentSortField, setCurrentSortField] = useState("" as SortField);
+  const [currentSearchTerm, setCurrentSearchTerm] = useState("");
+  const [currentStateFilter] = useState(new Set([1, 2]));
+
   const [locations] = api.location.getAll.useSuspenseQuery();
   const [vendingMachines] = api.vendingMachine.getAll.useSuspenseQuery();
+
+  const vendingMachineRows = useMemo(() => {
+    let items = [...vendingMachines];
+    items = items.filter((item) => {
+      return currentStateFilter.has(item.statusId);
+    });
+
+    if (currentSortField) {
+      items = items.sort((a, b) => {
+        const aValue = a?.[currentSortField];
+        const bValue = b?.[currentSortField];
+
+        if (aValue === null && bValue === null) return 0;
+        if (aValue === null) return 1;
+        if (bValue === null) return -1;
+
+        if (typeof aValue === "string" && bValue === "string") {
+          if (aValue?.trim().toLowerCase() < bValue?.trim().toLowerCase())
+            return currentSortDirection === "asc" ? -1 : 1;
+          if (aValue?.trim().toLowerCase() > bValue?.trim().toLowerCase())
+            return currentSortDirection === "asc" ? 1 : -1;
+          return 0;
+        } else {
+          if (aValue < bValue) return currentSortDirection === "asc" ? -1 : 1;
+          if (aValue > bValue) return currentSortDirection === "asc" ? 1 : -1;
+          return 0;
+        }
+      });
+    }
+
+    items = items.filter((item) => {
+      return (
+        item.name?.trim().toLowerCase().includes(currentSearchTerm) ||
+        item.manufacturer?.trim().toLowerCase().includes(currentSearchTerm) ||
+        item.model?.trim().toLowerCase().includes(currentSearchTerm) ||
+        item.serialNumber?.trim().toLowerCase().includes(currentSearchTerm) ||
+        item.notes?.trim().toLowerCase().includes(currentSearchTerm)
+      );
+    });
+    return items;
+  }, [
+    vendingMachines,
+    currentSortDirection,
+    currentSortField,
+    currentSearchTerm,
+    currentStateFilter,
+  ]);
 
   const deleteVendingMachine = api.vendingMachine.delete.useMutation({
     onSuccess: async () => {
@@ -47,25 +113,31 @@ export function VendingMachineList() {
     setIsDeleteModalOpen(true);
   };
 
+  const handleColumnClicked = (newSortField: string) => {
+    if (newSortField === currentSortField)
+      setCurrentSortDirection(currentSortDirection === "asc" ? "desc" : "asc");
+    if (newSortField !== currentSortField) setCurrentSortField(newSortField as SortField);
+  };
+
   const columns = [
-    { value: "Name" },
-    { value: "Manufacturer" },
-    { value: "Model" },
-    { value: "Serial Number" },
-    { value: "Has Tap Reader" },
-    { value: "Accepts Cash" },
-    // { value: 'Installation Date'},
-    // { value: 'Last Serviced At'},
-    { value: "Notes" },
-    { value: "Status" },
-    { value: "Location" },
-    { value: "Type" },
-    { value: "Ownership" },
-    { value: "Edit", srOnly: true },
-    { value: "Delete", srOnly: true },
+    { label: "Name", value: "name", onClick: handleColumnClicked },
+    { label: "Manufacturer", value: "manufacturer", onClick: handleColumnClicked },
+    { label: "Model", value: "model", onClick: handleColumnClicked },
+    { label: "Serial Number", value: "serialNumber", onClick: handleColumnClicked },
+    { label: "Has Tap Reader", value: "hasTapReader", onClick: handleColumnClicked },
+    { label: "Accepts Cash", value: "acceptsCash", onClick: handleColumnClicked },
+    // { label: 'Installation Date'},
+    // { label: 'Last Serviced At'},
+    { label: "Notes" },
+    { label: "Status", value: "status", onClick: handleColumnClicked },
+    { label: "Location" },
+    { label: "Type", value: "type", onClick: handleColumnClicked },
+    { label: "Ownership", value: "ownership", onClick: handleColumnClicked },
+    { label: "Edit", srOnly: true },
+    { label: "Delete", srOnly: true },
   ];
 
-  const rows = vendingMachines?.map((vm) => {
+  const rows = vendingMachineRows?.map((vm) => {
     return {
       id: vm.id,
       cells: [
@@ -87,7 +159,7 @@ export function VendingMachineList() {
           value: (
             <Button
               icon={<Pencil />}
-              iconOnly
+              kind="iconOnly"
               label="Update"
               onClick={() => handleUpdateOpen(vm)}
               size="sm"
@@ -99,7 +171,7 @@ export function VendingMachineList() {
           value: (
             <Button
               icon={<Trash />}
-              iconOnly
+              kind="iconOnly"
               label="Delete"
               onClick={() => handleDeleteOpen(vm)}
               size="sm"
@@ -129,7 +201,13 @@ export function VendingMachineList() {
       <div className="flex justify-end">
         <Button icon={<Plus size="16" />} label="Add a Vending Machine" onClick={handleAddOpen} />
       </div>
-      <Table columns={columns} id="vending-machine-list" rows={rows} />
+      <Table
+        columns={columns}
+        id="vending-machine-list"
+        rows={rows}
+        searchValue={currentSearchTerm}
+        setSearchValue={setCurrentSearchTerm}
+      />
     </div>
   );
 }
